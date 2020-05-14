@@ -76,12 +76,10 @@ public class MysqlGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://192.168.1.230:3307/family_doctor?useUnicode=true&serverTimezone=GMT&useSSL=false&characterEncoding=utf8");
-//        dsc.setUrl("jdbc:mysql://192.168.3.230:3309/hrs_survey?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true");
-//        dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.jdbc.Driver");
-        dsc.setUsername("family_doctor");
-        dsc.setPassword("family_doctorPWD");
+        dsc.setUrl("jdbc:mysql://127.0.0.1:3306/hrs_survey?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true");
+        dsc.setUsername("root");
+        dsc.setPassword("1119107284");
         mpg.setDataSource(dsc);
 
         // 包配置
