@@ -1,7 +1,6 @@
-package ${package.Mapper};
+package ${cfg.daoConf.packagePath};
 
-import ${package.Entity}.${entity};
-import ${superMapperClassPackage};
+import ${cfg.poConf.packagePath}.${entity}${cfg.poConf.fileNameSuffix};
 
 import com.guahao.convention.data.domain.PageQuery;
 import java.util.List;
@@ -15,19 +14,19 @@ import org.apache.ibatis.annotations.Param;
  * @author ${author}
  * @since ${date}
  */
-public interface ${table.mapperName} {
+public interface ${entity}${cfg.daoConf.fileNameSuffix} {
 
- ${entity} get(@param("po") ${entity} po);
+ ${entity}${cfg.poConf.fileNameSuffix} get(@Param("po") ${entity}${cfg.poConf.fileNameSuffix} po);
 
- List<${entity}> list(@param("po") ${entity} po);
+ List<${entity}${cfg.poConf.fileNameSuffix}> list(@Param("po") ${entity}${cfg.poConf.fileNameSuffix} po);
 
- List<${entity}> pageList(@param("po") ${entity} po , @Param("pageQuery") PageQuery pageQuery);
+ List<${entity}${cfg.poConf.fileNameSuffix}> pageList(@Param("po") ${entity}${cfg.poConf.fileNameSuffix} po , @Param("pageQuery") PageQuery pageQuery);
 
- Long count(@param("po") ${entity} po);
+ Long count(@Param("po") ${entity}${cfg.poConf.fileNameSuffix} po);
 
- int insert(${entity} po);
+ int insert(${entity}${cfg.poConf.fileNameSuffix} po);
 
- int updateByPrimaryKey(${entity} po);
+ int updateByPrimaryKey(${entity}${cfg.poConf.fileNameSuffix} po);
 
  int deleteByPrimaryKey(Long id);
 

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="${package.Mapper}.${table.mapperName}">
+<mapper namespace="${cfg.daoConf.packagePath}.${entity}${cfg.daoConf.fileNameSuffix}">
 
     <#--用于忽略字段时进行比较-->
     <#assign tableFiledCheck=(", "+table.fieldNames +",")/>
     <#--需要忽略返回的字段-->
     <#assign ignoreRetArr=['is_deleted','id']/>
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+    <resultMap id="BaseResultMap" type="${cfg.poConf.packagePath}.${entity}${cfg.poConf.fileNameSuffix}">
         <!--固定的自增主键-->
         <id column="id" jdbcType="BIGINT" property="id" />
         <#list table.fields as field>
@@ -50,7 +50,7 @@
     </sql>
 
     <!--单条记录查询-->
-    <select id="get" parameterType="${package.Entity}.${entity}" resultMap="BaseResultMap">
+    <select id="get" parameterType="${cfg.poConf.packagePath}.${entity}${cfg.poConf.fileNameSuffix}" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from
         ${table.name}
         <include refid="base_query" />
@@ -58,7 +58,7 @@
     </select>
 
     <!--列表查询-->
-    <select id="list" parameterType="${package.Entity}.${entity}" resultMap="BaseResultMap">
+    <select id="list" parameterType="${cfg.poConf.packagePath}.${entity}${cfg.poConf.fileNameSuffix}" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from
         ${table.name}
         <include refid="base_query" />
@@ -66,7 +66,7 @@
     </select>
 
     <!--分页查询-->
-    <select id="pageList" parameterType="${package.Entity}.${entity}" resultMap="BaseResultMap">
+    <select id="pageList" parameterType="${cfg.poConf.packagePath}.${entity}${cfg.poConf.fileNameSuffix}" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from
         ${table.name}
         <include refid="base_query" />
@@ -74,7 +74,7 @@
     </select>
 
     <!--查询总数-->
-    <select id="count" parameterType="${package.Entity}.${entity}" resultType="java.lang.Long">
+    <select id="count" parameterType="${cfg.poConf.packagePath}.${entity}${cfg.poConf.fileNameSuffix}" resultType="java.lang.Long">
         select count(*) from
         ${table.name}
         <include refid="base_query" />
@@ -84,7 +84,7 @@
     <#assign ignoreInsertArr=['is_deleted','id','gmt_created','gmt_modified']/>
 
     <!--新增数据-->
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="${package.Entity}.${entity}" useGeneratedKeys="true">
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="${cfg.poConf.packagePath}.${entity}${cfg.poConf.fileNameSuffix}" useGeneratedKeys="true">
         insert into ${table.name}(
 <#list table.fields as field>
     <#if !field.keyFlag && !ignoreInsertArr?seq_contains(field.name)><#--生成普通字段 -->
@@ -110,7 +110,7 @@
     <!--忽略更新的字段-->
     <#assign ignoreUpdateArr=['is_deleted','id','gmt_created','gmt_modified','modifier','creator']/>
     <#--更新数据-->
-    <update id="updateByPrimaryKey" parameterType="${package.Entity}.${entity}">
+    <update id="updateByPrimaryKey" parameterType="${cfg.poConf.packagePath}.${entity}${cfg.poConf.fileNameSuffix}">
         update ${table.name}
         <set>
             gmt_modified = now(),

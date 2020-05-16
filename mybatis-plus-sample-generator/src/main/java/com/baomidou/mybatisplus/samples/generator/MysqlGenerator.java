@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import com.baomidou.mybatisplus.samples.generator.conf.MyTemplateConf;
 
 /**
  * <p>
@@ -70,16 +71,19 @@ public class MysqlGenerator {
 
         //设置后缀名，允许占位符
         gc.setMapperName("%sDAO");
-        gc.setEntityName("%sPO");
+//        gc.setEntityName("%sPO");
         gc.setServiceName("%sManager");
         gc.setServiceImplName("%sManagerImpl");
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setDriverName("com.mysql.jdbc.Driver");
-        dsc.setUrl("jdbc:mysql://127.0.0.1:3306/hrs_survey?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true");
-        dsc.setUsername("root");
-        dsc.setPassword("1119107284");
+//        dsc.setUrl("jdbc:mysql://127.0.0.1:3306/hrs_survey?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true");
+//        dsc.setUsername("root");
+//        dsc.setPassword("1119107284");
+        dsc.setUrl("jdbc:mysql://192.168.1.230:3307/family_doctor?useUnicode=true&serverTimezone=GMT&useSSL=false&characterEncoding=utf8");
+        dsc.setUsername("family_doctor");
+        dsc.setPassword("family_doctorPWD");
         mpg.setDataSource(dsc);
 
         // 包配置
@@ -94,10 +98,61 @@ public class MysqlGenerator {
         pc.setService("manager");
         pc.setServiceImpl("manager.impl");
 
+        MyTemplateConf boConf = MyTemplateConf.builder()
+            .templatePath("/mytemplates/entityBO.java.ftl")
+            .path("/mybatis-plus-sample-generator/src/main/java")
+            .packagePath("com.baomidou.mybatisplus.samples.generator.test.bo")
+            .fileNameSuffix("BO")
+            .fileSuffix(StringPool.DOT_JAVA)
+            .build();
 
+        MyTemplateConf poConf = MyTemplateConf.builder()
+            .templatePath("/mytemplates/entityPO.java.ftl")
+            .path("/mybatis-plus-sample-generator/src/main/java")
+            .packagePath("com.baomidou.mybatisplus.samples.generator.test.po")
+            .fileNameSuffix("PO")
+            .fileSuffix(StringPool.DOT_JAVA)
+            .build();
 
+        MyTemplateConf daoConf = MyTemplateConf.builder()
+            .templatePath("/mytemplates/mapper.java.ftl")
+            .path("/mybatis-plus-sample-generator/src/main/java")
+            .packagePath("com.baomidou.mybatisplus.samples.generator.test.dao")
+            .fileNameSuffix("DAO")
+            .fileSuffix(StringPool.DOT_JAVA)
+            .build();
 
+        MyTemplateConf mapperConf = MyTemplateConf.builder()
+            .templatePath("/mytemplates/mapper.xml.ftl")
+            .path("/mybatis-plus-sample-generator/src/main/java")
+            .packagePath("com.baomidou.mybatisplus.samples.generator.test.xml")
+            .fileNameSuffix("")
+            .fileSuffix(StringPool.DOT_XML)
+            .build();
 
+        MyTemplateConf managerConf = MyTemplateConf.builder()
+            .templatePath("/mytemplates/manager.java.ftl")
+            .path("/mybatis-plus-sample-generator/src/main/java")
+            .packagePath("com.baomidou.mybatisplus.samples.generator.test.manager")
+            .fileNameSuffix("Manager")
+            .fileSuffix(StringPool.DOT_JAVA)
+            .build();
+
+        MyTemplateConf managerImplConf = MyTemplateConf.builder()
+            .templatePath("/mytemplates/managerImpl.java.ftl")
+            .path("/mybatis-plus-sample-generator/src/main/java")
+            .packagePath("com.baomidou.mybatisplus.samples.generator.test.manager.impl")
+            .fileNameSuffix("ManagerImpl")
+            .fileSuffix(StringPool.DOT_JAVA)
+            .build();
+
+        List<MyTemplateConf> confList = new ArrayList<>();
+        confList.add(boConf);
+        confList.add(poConf);
+        confList.add(daoConf);
+        confList.add(mapperConf);
+        confList.add(managerConf);
+        confList.add(managerImplConf);
 
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
@@ -105,8 +160,12 @@ public class MysqlGenerator {
             public void initMap() {
                 // to do nothing
                 HashMap<String, Object> injectMap = new HashMap<>();
-//                injectMap.put("daoPath", daoPath);
-
+                injectMap.put("boConf", boConf);
+                injectMap.put("poConf", poConf);
+                injectMap.put("daoConf", daoConf);
+                injectMap.put("mapperConf", mapperConf);
+                injectMap.put("managerConf", managerConf);
+                injectMap.put("managerImplConf", managerImplConf);
                 this.setMap(injectMap);
             }
         };
@@ -133,14 +192,23 @@ public class MysqlGenerator {
 //        });
 
         //自定义bo对象
-        focList.add(new FileOutConfig("/mytemplates/entityBO.java.ftl") {
-            @Override
-            public String outputFile(TableInfo tableInfo) {
-                // 自定义输入文件名称
-                return projectPath + "/mybatis-plus-sample-generator/src/main/resources/mapper/" + pc.getModuleName()
-                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
-            }
-        });
+
+        for (MyTemplateConf myTemplateConf : confList) {
+            focList.add(new FileOutConfig(myTemplateConf.getTemplatePath()) {
+                @Override
+                public String outputFile(TableInfo tableInfo) {
+                    // 自定义输入文件名称
+                    StringBuilder fileSb = new StringBuilder(projectPath)
+                        .append(joinPath(myTemplateConf.getPath(), myTemplateConf.getPackagePath()))
+                        .append(File.separator)
+                        .append(tableInfo.getEntityName()).append(myTemplateConf.getFileNameSuffix())
+                        .append(myTemplateConf.getFileSuffix());
+
+                    return fileSb.toString();
+                }
+            });
+        }
+
 
 
         cfg.setFileOutConfigList(focList);
@@ -149,12 +217,16 @@ public class MysqlGenerator {
 
 
         TemplateConfig tc = new TemplateConfig();
-        tc.setMapper("/mytemplates/mapper.java");
-        tc.setXml("/mytemplates/mapper.xml");
-        tc.setEntity("/mytemplates/entity.java");
-        tc.setService("/mytemplates/service.java");
-        tc.setServiceImpl("/mytemplates/serviceImpl.java");
-
+//        tc.setMapper("/mytemplates/mapper.java");
+//        tc.setXml("/mytemplates/mapper.xml");
+//        tc.setEntity("/mytemplates/entity.java");
+//        tc.setService("/mytemplates/service.java");
+//        tc.setServiceImpl("/mytemplates/serviceImpl.java");
+        tc.setMapper(null);
+        tc.setXml(null);
+        tc.setEntity(null);
+        tc.setService(null);
+        tc.setServiceImpl(null);
         mpg.setTemplate(tc);
 
         // 策略配置
