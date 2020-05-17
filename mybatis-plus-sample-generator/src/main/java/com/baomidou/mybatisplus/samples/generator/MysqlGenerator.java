@@ -78,12 +78,12 @@ public class MysqlGenerator {
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setDriverName("com.mysql.jdbc.Driver");
-//        dsc.setUrl("jdbc:mysql://127.0.0.1:3306/hrs_survey?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true");
-//        dsc.setUsername("root");
-//        dsc.setPassword("1119107284");
-        dsc.setUrl("jdbc:mysql://192.168.1.230:3307/family_doctor?useUnicode=true&serverTimezone=GMT&useSSL=false&characterEncoding=utf8");
-        dsc.setUsername("family_doctor");
-        dsc.setPassword("family_doctorPWD");
+        dsc.setUrl("jdbc:mysql://121.199.44.25:3306/litemall?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true");
+        dsc.setUsername("root");
+        dsc.setPassword("1119107284");
+//        dsc.setUrl("jdbc:mysql://192.168.1.230:3307/family_doctor?useUnicode=true&serverTimezone=GMT&useSSL=false&characterEncoding=utf8");
+//        dsc.setUsername("family_doctor");
+//        dsc.setPassword("family_doctorPWD");
         mpg.setDataSource(dsc);
 
         // 包配置
@@ -146,6 +146,14 @@ public class MysqlGenerator {
             .fileSuffix(StringPool.DOT_JAVA)
             .build();
 
+        MyTemplateConf converterConf = MyTemplateConf.builder()
+                .templatePath("/mytemplates/converter.java.ftl")
+                .path("/mybatis-plus-sample-generator/src/main/java")
+                .packagePath("com.baomidou.mybatisplus.samples.generator.test.converter")
+                .fileNameSuffix("Converter")
+                .fileSuffix(StringPool.DOT_JAVA)
+                .build();
+
         List<MyTemplateConf> confList = new ArrayList<>();
         confList.add(boConf);
         confList.add(poConf);
@@ -153,6 +161,7 @@ public class MysqlGenerator {
         confList.add(mapperConf);
         confList.add(managerConf);
         confList.add(managerImplConf);
+        confList.add(converterConf);
 
         // 自定义配置
         InjectionConfig cfg = new InjectionConfig() {
@@ -166,33 +175,13 @@ public class MysqlGenerator {
                 injectMap.put("mapperConf", mapperConf);
                 injectMap.put("managerConf", managerConf);
                 injectMap.put("managerImplConf", managerImplConf);
+                injectMap.put("converterConf", converterConf);
                 this.setMap(injectMap);
             }
         };
         List<FileOutConfig> focList = new ArrayList<>();
-        //自定义dao对象
-//        focList.add(new FileOutConfig("/mytemplates/mapper.java.ftl") {
-//            @Override
-//            public String outputFile(TableInfo tableInfo) {
-//                tableInfo.setMapperName(tableInfo.getEntityName() + "DAO");
-//                // 自定义输入文件名称
-//                String daoPath = joinPath(projectPath + "/mybatis-plus-sample-generator/src/main/java/",
-//                    joinPackage(pc.getParent(), pc.getMapper()));
-//                return daoPath +"/"+ tableInfo.getEntityName() + "DAO" + StringPool.DOT_JAVA;
-//            }
-//        });
-        //自定义mapper文件
-//        focList.add(new FileOutConfig("/mytemplates/mapper.xml.ftl") {
-//            @Override
-//            public String outputFile(TableInfo tableInfo) {
-//                // 自定义输入文件名称
-//                return projectPath + "/mybatis-plus-sample-generator/src/main/resources/mapper/" + pc.getModuleName()
-//                        + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
-//            }
-//        });
 
-        //自定义bo对象
-
+        //自定义对象
         for (MyTemplateConf myTemplateConf : confList) {
             focList.add(new FileOutConfig(myTemplateConf.getTemplatePath()) {
                 @Override
@@ -237,8 +226,7 @@ public class MysqlGenerator {
         strategy.setEntityLombokModel(true);
 //        strategy.setSuperControllerClass("com.baomidou.mybatisplus.samples.generator.common.BaseController");
 //        strategy.setInclude(scanner("表名"));
-        strategy.setInclude("sys_conf_org");
-//        strategy.setSuperEntityColumns("id");
+        strategy.setInclude("litemall_order");//sys_conf_org
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
         mpg.setStrategy(strategy);
